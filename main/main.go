@@ -3,14 +3,29 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
+
+	urlshortener "github.com/bishalbera/url-shortener"
 )
 
-func greet(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World! %s", time.Now())
+func main() {
+	mux:= defaultMux()
+	pathsToUrls:= map[string]string {
+		"/google": "https://google.com",
+		"/youtube": "https://youtube.com",
+	}
+
+	mapHandler:= urlshortener.MapHandler(pathsToUrls, mux)
+
+	fmt.Println("Starting the server on :8085")
+	http.ListenAndServe(":8085", mapHandler)
 }
 
-func main() {
-	http.HandleFunc("/", greet)
-	http.ListenAndServe(":8080", nil)
+func defaultMux() *http.ServeMux {
+	mux:= http.NewServeMux()
+	mux.HandleFunc("/", love)
+	return mux
+}
+
+func love(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Love You 3000 :)")
 }
